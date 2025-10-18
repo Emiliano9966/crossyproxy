@@ -1,0 +1,3 @@
+name = "crossyproxy-worker"
+compatibility_date = "2025-10-18"
+main = "src/index.js"
