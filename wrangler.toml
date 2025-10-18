@@ -1,4 +1,4 @@
-name = "crossyproxy"
+name = "crossyproxy-site"
 compatibility_date = "2025-10-18"
 
 # Worker entry point
