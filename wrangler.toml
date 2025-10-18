@@ -4,6 +4,10 @@ compatibility_date = "2025-10-18"
 # Worker entry point
 main = "./functions/index.js"
 
+<<<<<<< HEAD
 # Static site folder
+=======
+# Site folder
+>>>>>>> a4d774a959d19e9f279fea0f72f44705b4b0a20d
 [site]
 bucket = "./public"
