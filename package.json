@@ -1,0 +1,10 @@
+{
+  "name": "crossyproxy",
+  "version": "1.0.0",
+  "main": "functions/index.js",
+  "scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler publish"
+  },
+  "devDependencies": {}
+}
