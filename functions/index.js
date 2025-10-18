@@ -1,33 +1,40 @@
-const functions = require("firebase-functions");
-const express = require("express");
-const fetch = require("node-fetch");
-const app = express();
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request))
+})
 
-app.use(require("cors")({ origin: true }));
-app.use(express.json());
+/**
+ * Handles incoming requests and proxies them
+ * @param {Request} request
+ */
+async function handleRequest(request) {
+  const url = new URL(request.url)
+  const target = url.searchParams.get('url') // ?url=https://example.com
 
-app.post("/proxy", async (req, res) => {
-  const { url } = req.body;
-  if (!url || !/^https?:\/\//.test(url)) {
-    return res.status(400).send("Invalid URL");
+  if (!target) {
+    return new Response('Missing URL parameter. Use ?url=https://example.com', { status: 400 })
   }
 
   try {
-    const response = await fetch(url);
-    const buffer = await response.arrayBuffer();
+    const response = await fetch(target, {
+      method: request.method,
+      headers: request.headers,
+      body: request.method !== 'GET' && request.method !== 'HEAD' ? request.body : undefined,
+      redirect: 'manual'
+    })
 
-    res.status(response.status);
-    response.headers.forEach((value, key) => {
-      if (!["transfer-encoding", "content-encoding", "connection"].includes(key.toLowerCase())) {
-        res.setHeader(key, value);
-      }
-    });
+    // Clone the response so we can modify headers
+    const newHeaders = new Headers(response.headers)
+    // Allow all origins (CORS)
+    newHeaders.set('Access-Control-Allow-Origin', '*')
+    newHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    newHeaders.set('Access-Control-Allow-Headers', '*')
 
-    res.send(Buffer.from(buffer));
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: newHeaders
+    })
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Proxy failed");
+    return new Response('Error fetching URL: ' + err.message, { status: 500 })
   }
-});
-
-exports.api = functions.https.onRequest(app);
+}
