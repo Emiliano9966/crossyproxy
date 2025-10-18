@@ -1,10 +1,9 @@
 name = "crossyproxy"
 compatibility_date = "2025-10-18"
-type = "javascript"
 
-# Entry point for your Worker script
-main = "functions/index.js"
+# Worker entry point
+main = "./functions/index.js"
 
-# Optional: static assets
+# Site folder
 [site]
 bucket = "./public"
